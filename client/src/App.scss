@@ -1,3 +1,5 @@
+$primary-color: rgb(255, 128, 0);
+
 html * {
 	box-sizing: border-box;
 }
@@ -81,17 +83,55 @@ body {
 			padding: 10px 20px;
 			transition: box-shadow .2s ease-in-out;
 			position: relative;
+			transition-duration: 200ms;
 
 			&:hover {
-				box-shadow: 0 2px 6px 1px #d3d7da;
+				box-shadow: 0 2px 6px 1px $primary-color;
+
+				.overlay {
+					display: block;
+				}
+			}
+
+			.overlay {
+				display: none;
 			}
 
 			.title {
 				margin: 15px 0;
-				font-size: 16px;
+				font-size: 20px;
 				font-weight: 400;
 				font-style: normal;
-				color: #20455e;
+				color: $primary-color;
+				letter-spacing: 0.05em;
+			}
+
+			.content {
+				font-size: 15px;
+			}
+
+			.header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			.hideTicket {
+				padding: 5px 20px;
+				font-size: 16px;
+				border: 2px solid $primary-color;
+				border-radius: 6px;
+				text-transform: uppercase;
+				letter-spacing: 0.07em;
+				color: $primary-color;
+				background: transparent;
+				transition-duration: 200ms;
+				cursor: pointer;
+			}
+
+			.hideTicket:hover {
+				background: $primary-color;
+				color: #fff;
 			}
 
 			footer {

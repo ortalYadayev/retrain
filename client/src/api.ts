@@ -8,6 +8,7 @@ export type Ticket = {
     creationTime: number;
     userEmail: string;
     labels?: string[];
+    hide: boolean;
 }
 
 export type ApiClient = {
@@ -17,7 +18,12 @@ export type ApiClient = {
 export const createApiClient = (): ApiClient => {
     return {
         getTickets: () => {
-            return axios.get(APIRootPath).then((res) => res.data);
+            return axios.get(APIRootPath).then((res) =>
+                res.data.map((element: Ticket) => element = {
+                    ...element,
+                    hide: false
+                })
+            );
         }
     }
 }

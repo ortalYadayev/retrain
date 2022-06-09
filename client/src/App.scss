@@ -7,6 +7,7 @@ $shadow--light: #e1e5e8;
 $input--light: #20455e;
 $input-placeholder--light: #b6c1cd;
 $a--light: #3899ec;
+$errors--light: #FF0000;
 
 $primary-color--dark: #FFB266;
 $bg-body--dark: #404040;
@@ -14,18 +15,20 @@ $bg--dark: #000;
 $color--dark: #fff;
 $a--dark: #fff;;
 $footer--dark: #DCDCDC;
+$errors--dark: #FF6666;
 
 html * {
 	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
 
 body {
 	font-family: 'Open Sans', sans-serif;
-	margin: 0;
 
 	.main-light {
 		background-color: $bg-body--light;
-		padding: 50px;
+		padding: 100px;
 		min-height: 100vh;
 	}
 
@@ -71,14 +74,24 @@ body {
 			color: $a--light;
 		}
 
-		.dark_mood--button {
+		.more-button {
+			border: 2px solid $primary-color--light;
+			color: $primary-color--light;
+		}
+
+		.more-button:hover {
+			color: $bg--light;
+			background: $primary-color--light;
+		}
+
+		.dark_mood--button, .add-ticket,  {
 			color: $color--light;
 			border: 2px solid $color--light;
 		}
 
-		.dark_mood--button:hover {
-			background: #000;
-			color: #fff;
+		.dark_mood--button:hover, .add-ticket:hover {
+			background: $color--light;
+			color: $bg--light;
 		}
 	}
 
@@ -106,7 +119,7 @@ body {
 			}
 		}
 
-		.header {
+		.flex {
 			color: $color--dark;
 		}
 
@@ -114,12 +127,22 @@ body {
 			color: $a--dark;
 		}
 
-		.dark_mood--button {
+		.more-button {
+			border: 2px solid $primary-color--dark;
+			color: $primary-color--dark;
+		}
+
+		.more-button:hover {
+			color: $bg--dark;
+			background: $primary-color--dark;
+		}
+
+		.dark_mood--button, .add-ticket {
 			color: $color--dark;
 			border: 2px solid $color--dark;
 		}
 
-		.dark_mood--button:hover {
+		.dark_mood--button:hover, .add-ticket:hover {
 			background: $color--dark;
 			color: $bg--dark;
 		}
@@ -153,17 +176,41 @@ body {
 		font-size: 12px;
 	}
 
-	.header {
+	.flex {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
 		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+	@media (max-width: 400px) {
+		.flex {
+			justify-content: center;
+		}
 	}
 
 	.icon-button {
-		margin-left: 10px;
+		margin-right: 10px;
+	}
+
+	.more-button {
+		margin: auto;
+		margin-top: 20px;
 	}
 
 	.dark_mood--button {
+		position: fixed;
+		z-index: 100;
+		background: $bg--light;
+		left: 0;
+		top: 0;
+		margin: 20px;
+	}
+
+	.dark_mood--button, .add-ticket, .more-button {
+		display: flex;
+		align-items: center;
 		padding: 5px 20px;
 		font-size: 16px;
 		border-radius: 6px;
@@ -269,13 +316,14 @@ body {
 			transition: box-shadow .2s ease-in-out;
 			position: relative;
 			transition-duration: 200ms;
+			word-wrap: break-word;
 
 			.overlay {
 				display: none;
 			}
 
 			.title {
-				margin: 15px 0;
+				margin: 15px 0 0 0;
 				font-size: 20px;
 				font-weight: 400;
 				font-style: normal;
@@ -283,6 +331,7 @@ body {
 			}
 
 			.content {
+				margin: 0;
 				font-size: 15px;
 			}
 
@@ -300,6 +349,7 @@ body {
 			footer {
 				display: flex;
 				justify-content: space-between;
+				overflow: hidden;
 
 				.meta-data {
 					font-size: 12px;
@@ -309,6 +359,198 @@ body {
 			}
 
 
+		}
+	}
+
+	.light {
+		.form-card {
+			background-color: $bg--light;
+			border: 1px solid $bg--light;
+			box-shadow: 0 2px 6px 1px $shadow--light;
+
+			.errors {
+				border: 2px solid $errors--light;
+				color: $errors--light;
+			}
+
+			button:hover {
+				background: $color--light;
+				color: $bg--light;
+			}
+
+			.row-label {
+				div {
+					input {
+						color: $input--light;
+						border: 2px solid $shadow--light;
+
+						&::placeholder {
+							color: $input-placeholder--light;
+						}
+					}
+				}
+			}
+
+			.row {
+				input, textarea {
+					color: $input--light;
+					border: 2px solid $shadow--light;
+
+					&::placeholder {
+						color: $input-placeholder--light;
+					}
+				}
+			}
+		}
+	}
+
+	.dark {
+		.form-card {
+			background-color: $bg--dark;
+			border: 1px solid $bg--dark;
+			box-shadow: 0 2px 6px 1px $bg--dark;
+			color: $color--dark;
+
+			.errors {
+				border: 2px solid $errors--dark;
+				color: $errors--dark;
+			}
+
+			button {
+				color: $color--dark;
+				border: 2px solid $color--dark;
+			}
+
+			button:hover {
+				background: $color--dark;
+				color: $bg--dark;
+			}
+
+			.row-label {
+				p {
+					color: $color--dark;
+				}
+
+				div {
+					label {
+						color: $color--dark;
+					}
+
+					input {
+						color: $color--dark;
+						background: $bg-body--dark;
+						box-shadow: 0 2px 6px 1px $bg--dark;
+
+						&::placeholder {
+							color: $color--dark;
+						}
+					}
+				}
+			}
+
+			.row {
+				input, textarea {
+					color: $color--dark;
+					background: $bg-body--dark;
+					box-shadow: 0 2px 6px 1px $bg--dark;
+
+					&::placeholder  {
+						color: $color--dark;
+					}
+				}
+			}
+		}
+	}
+
+	.form-card {
+		width: 100%;
+		flex-shrink: 0;
+		border-radius: 8px;
+		margin-bottom: 50px;
+		display: flex;
+		flex-direction: column;
+		padding: 10px 20px;
+		transition: box-shadow .2s ease-in-out;
+		position: relative;
+		transition-duration: 200ms;
+
+		.errors {
+			padding: 5px 20px;
+			border-radius: 6px;
+			opacity: 0;
+			transform: rotateX(-90deg);
+			transform-origin: top center;
+			animation: showErrors 1s cubic-bezier(0.38, 0.97, 0.56, 0.76) forwards;
+		}
+
+		@keyframes showErrors {
+			100% {
+				opacity: 1;
+				transform: none;
+			}
+		}
+
+		.submit {
+			display: flex;
+			justify-content: center;
+			margin-top: 10px;
+
+			button {
+				text-transform: uppercase;
+				font-size: 16px;
+				padding: 5px 20px;
+				border-radius: 6px;
+				letter-spacing: 0.07em;
+				background: transparent;
+				transition-duration: 200ms;
+				cursor: pointer;
+			}
+		}
+
+		.row-label {
+			padding: 10px;
+
+			p {
+				font-size: 12px;
+				padding: 2px;
+			}
+
+			div {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				label {
+					margin-right: 10px;
+				}
+
+				input {
+					flex: 1 1 0%;
+					padding: 10px 20px;
+					border-radius: 6px;
+					font-size: 14px;
+					outline: 0;
+				}
+			}
+		}
+
+		.row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 10px;
+
+			label {
+				margin-right: 10px;
+			}
+
+			input, textarea {
+				flex: 1 1 0%;
+				padding: 10px 20px;
+				border-radius: 6px;
+				font-size: 14px;
+				outline: 0;
+			}
 		}
 	}
 }

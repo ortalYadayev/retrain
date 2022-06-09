@@ -1,12 +1,9 @@
 import express, { RequestHandler } from 'express';
 import {json as bodyParserJson} from 'body-parser';
 import { dbClient } from './db';
-// import { serverAPIPort, APIPath } from '@fed-exam/config';
+import { serverAPIPort, APIPath } from '@fed-exam/config';
 
-const APIPath = `/api/tickets`;
-console.log('starting server', { port: 33333, path: APIPath });
-
-// console.log('starting server', { serverAPIPort, APIPath });
+console.log('starting server', { serverAPIPort, APIPath });
 
 const app = express();
 
@@ -35,17 +32,27 @@ app.get('/', (req, res) => {
 });
 
 app.get(APIPath, (async (req, res) => {
-
   // @ts-ignore
   const page: number = req.query.page || 1;
-  const data = await db.getTickets();
+  const data = await db.getTickets(page);
 
+  console.log(data)
   res.json(data);
 }));
 
-// app.listen(serverAPIPort);
-// console.log('server running', serverAPIPort)
+app.post(APIPath, (async (req, res) => {
+  const payload = req.body;
 
-app.listen(33333);
-console.log('server running', 33333)
+  try {
+    await db.clone(payload);
+
+    res.status(201).json();
+  } catch (error) {
+    res.status(422).json({ message: 'All fields are required' });
+  }
+
+}));
+
+app.listen(serverAPIPort);
+console.log('server running', serverAPIPort)
 

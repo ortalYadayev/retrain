@@ -1,29 +1,47 @@
 import React from 'react';
 import './App.scss';
 import { createApiClient, Ticket } from './api';
-import { Moon, Sun } from 'react-bootstrap-icons';
+import { Moon, Sun, PlusLg } from 'react-bootstrap-icons';
+import { v4 as uuidv4 } from "uuid";
+import {stat} from "fs";
 
 export type AppState = {
 	tickets?: Ticket[],
 	search: string,
 	mood: string,
+	openForm: boolean,
+	payload: Ticket,
+	errors: string,
+	page: number,
 }
 
 const api = createApiClient();
-
 
 export class App extends React.PureComponent<{}, AppState> {
 
 	state: AppState = {
 		search: '',
 		mood: 'light',
+		openForm: false,
+		payload: {
+			id: '',
+			title: '',
+			userEmail: '',
+			content: '',
+			creationTime: 0,
+			labels: [],
+			hide: false,
+		},
+		errors: '',
+		page: 0,
 	}
 
 	searchDebounce: any = null;
 
 	async componentDidMount() {
 		this.setState({
-			tickets: await api.getTickets()
+			tickets: await api.getTickets(this.state.page),
+			page: this.state.page + 1,
 		});
 	}
 
@@ -50,8 +68,9 @@ export class App extends React.PureComponent<{}, AppState> {
 		return (
 		<div className={ mood }>
 			<ul className='tickets'>
-				{ filteredTickets.map((ticket) => (<li key={ ticket.id } className='ticket'>
-					<div className='header'>
+				{ filteredTickets.map((ticket) => (
+				<li key={ ticket.id } className='ticket'>
+					<div className='flex'>
 						<h5 className='title'>{ ticket.title }</h5>
 						<button onClick={ () => HandleClick(ticket) } className='hideTicket overlay'>
 							{
@@ -86,44 +105,204 @@ export class App extends React.PureComponent<{}, AppState> {
 		}, 300);
 	}
 
-	Mood = () => {
+	mood = () => {
 		this.setState({
 			mood: this.state.mood === 'light' ? 'dark' : 'light',
 		})
 	}
 
+	newTicket = async () => {
+		this.setState({
+			openForm: !this.state.openForm,
+			errors: '',
+		})
+	}
+
+	emailValidation = () =>{
+		const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+		if(!this.state.payload.userEmail || regex.test(this.state.payload.userEmail) === false){
+			this.setState({
+				errors: "Email is not valid.",
+			});
+			return false;
+		}
+		return true;
+	}
+
+	handleSubmit = async () => {
+		const payload = this.state.payload;
+
+		if(payload.title === '' || payload.content === '') {
+			this.setState({
+				errors: 'All fields are required',
+			})
+
+			return;
+		}
+
+		if(!this.emailValidation()){
+			return;
+		}
+
+		const id = uuidv4();
+
+		payload.id = id;
+		payload.creationTime = new Date().getTime();
+
+		try {
+			await api.clone(this.state.payload);
+
+			this.setState({
+				tickets: this.state.tickets?.concat({...this.state.payload, hide: false}),
+				payload: {
+					id: '',
+					title: '',
+					userEmail: '',
+					content: '',
+					creationTime: 0,
+					labels: [],
+					hide: false,
+				},
+				openForm: false,
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	handleChange = (key: string, value: string) => {
+		const payload = this.state.payload;
+		switch (key) {
+			case 'title':
+				payload.title = value;
+				break;
+			case 'content':
+				payload.content = value;
+				break;
+			case 'userEmail':
+				payload.userEmail = value;
+				break;
+			case 'labels':
+				payload.labels = value.split(',').filter(item => item.length > 0);
+				break;
+		}
+
+		this.setState({
+			payload,
+			errors: '',
+		})
+	}
+
+	form = () => {
+		const { mood, errors } = this.state;
+
+		return (
+			<div className={ mood }>
+				<div className='form-card'>
+					<div className="row">
+						<label htmlFor="title">Title</label>
+						<input type="text" placeholder="title" onDragEnter={ this.handleSubmit } onChange={event => this.handleChange('title', event.target.value)} />
+					</div>
+
+					<div className="row-label">
+						<p>
+							Separate with a comma (,) between the labels
+						</p>
+						<div>
+							<label htmlFor="labels">Labels</label>
+							<input type="text" placeholder="labels" onKeyPress={ this.handleSubmit } onChange={event => this.handleChange('labels', event.target.value)} />
+						</div>
+					</div>
+
+
+					<div className="row">
+						<label htmlFor="content">Content</label>
+						<textarea placeholder="content" onChange={event => this.handleChange('content', event.target.value)} />
+					</div>
+
+					<div className="row">
+						<label htmlFor="email">Email</label>
+						<input type="email" placeholder="email" onKeyPress={ this.handleSubmit } onChange={event => this.handleChange('userEmail', event.target.value)} />
+					</div>
+
+					{ errors !== '' ?
+						<div className='errors'>
+							{ errors }
+						</div>
+						: null
+					}
+
+					<div className="submit">
+						<button onClick={ this.handleSubmit }>
+							Send
+						</button>
+					</div>
+				</div>
+			</div>
+		)
+	}
+
+	moreTickets = async () => {
+		const more = await api.getTickets(this.state.page);
+
+		this.setState({
+			tickets: this.state.tickets?.concat(more),
+			page: more.length === 20 ? this.state.page + 1 : -1,
+		});
+	}
+
 	render() {	
-		const { tickets, mood } = this.state;
+		const { tickets, mood, openForm, page } = this.state;
 
 		return (
 		<main className={ mood === 'light' ? 'main-light' : 'main-dark' }>
 			<div className={ mood }>
-				<div className='header'>
-					<h1>Tickets List</h1>
-					<button onClick={ this.Mood } className='dark_mood--button'>
-						{ mood === 'light' ?
-								<div>
-									Switch To dark Mood
-									<Moon className='icon-button' />
-								</div>
-								: <div>
-									Switch To Light Mood
-									<Sun className='icon-button' />
-								</div>
-						}
+				{ mood === 'light' ?
+					<button onClick={ this.mood } className='dark_mood--button'>
+						<Moon className='icon-button' />
+						dark Mood
 					</button>
+					: <button onClick={ this.mood } className='dark_mood--button'>
+						<Sun className='icon-button' />
+						Light Mood
+					</button>
+				}
+				<div>
+					<h1>Tickets List</h1>
 				</div>
 				<header>
 					<input type="search" placeholder="Search..." onChange={(e) => this.onSearch(e.target.value)}/>
 				</header>
 				{ tickets ?
-					<div className='results'>Showing {tickets.length} results</div>
+					<div className='flex'>
+						<div className='results'>Showing {tickets.length} results</div>
+						<button onClick={ this.newTicket } className='add-ticket'>
+							<PlusLg className='icon-button' />
+							Add Ticket
+						</button>
+					</div>
 					:
 					null
 				}
+
+				{ openForm ?
+					this.form()
+					: null
+				}
+
 				{ tickets ?
 					this.renderTickets(tickets)
 					: <h2>Loading..</h2>
+				}
+
+				{
+					page !== -1 ?
+						<button onClick={ this.moreTickets } className='more-button'>
+							More Tickets
+						</button>
+						: <div className='results'>
+							no more result
+						</div>
 				}
 			</div>
 		</main>)

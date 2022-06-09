@@ -130,7 +130,7 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	handleSubmit = async () => {
-		const payload = this.state.payload;
+		const { payload, tickets } = this.state;
 
 		if(payload.title === '' || payload.content === '') {
 			this.setState({
@@ -148,12 +148,17 @@ export class App extends React.PureComponent<{}, AppState> {
 
 		payload.id = id;
 		payload.creationTime = new Date().getTime();
+		payload.hide = false;
 
 		try {
 			await api.clone(this.state.payload);
 
+			const newTicket = [payload];
+			if(tickets)
+				newTicket.push(...tickets );
+
 			this.setState({
-				tickets: this.state.tickets?.concat({...this.state.payload, hide: false}),
+				tickets: newTicket,
 				payload: {
 					id: '',
 					title: '',

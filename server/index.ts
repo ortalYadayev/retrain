@@ -36,7 +36,6 @@ app.get(APIPath, (async (req, res) => {
   const page: number = req.query.page || 1;
   const data = await db.getTickets(page);
 
-  console.log(data)
   res.json(data);
 }));
 

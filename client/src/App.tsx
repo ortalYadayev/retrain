@@ -260,18 +260,11 @@ export class App extends React.PureComponent<{}, AppState> {
 		const { tickets, mood, openForm, page } = this.state;
 
 		return (
-		<main className={ mood === 'light' ? 'main-light' : 'main-dark' }>
+		<main data-testid="main" className={ mood === 'light' ? 'main-light' : 'main-dark' }>
 			<div className={ mood }>
-				{ mood === 'light' ?
-					<button onClick={ this.mood } className='dark_mood--button'>
-						<Moon className='icon-button' />
-						dark Mood
-					</button>
-					: <button onClick={ this.mood } className='dark_mood--button'>
-						<Sun className='icon-button' />
-						Light Mood
-					</button>
-				}
+				<button data-testid="dark-mood" onClick={ this.mood } className='dark_mood--button'>
+					{ mood === 'light' ? 'Dark' : 'Light'} Mood
+				</button>
 				<div>
 					<h1>Tickets List</h1>
 				</div>
@@ -283,7 +276,7 @@ export class App extends React.PureComponent<{}, AppState> {
 						<div className='results'>Showing {tickets.length} results</div>
 						<button onClick={ this.newTicket } className='add-ticket'>
 							<PlusLg className='icon-button' />
-							Add Ticket
+							{ openForm ? 'Cancel' : 'Add Ticket' }
 						</button>
 					</div>
 					:
@@ -297,15 +290,14 @@ export class App extends React.PureComponent<{}, AppState> {
 
 				{ tickets ?
 					this.renderTickets(tickets)
-					: <h2>Loading..</h2>
+					: <h2 data-testid="not-ticket">Loading..</h2>
 				}
 
-				{
-					page !== -1 ?
-						<button onClick={ this.moreTickets } className='more-button'>
+				{ page !== -1 ?
+						<button data-testid='more' onClick={ this.moreTickets } className='more-button'>
 							More Tickets
 						</button>
-						: <div className='results'>
+						: <div data-testid='no-more' className='results'>
 							no more result
 						</div>
 				}

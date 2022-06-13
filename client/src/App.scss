@@ -28,23 +28,26 @@ body {
 
 	.main-light {
 		background-color: $bg-body--light;
-		padding: 100px;
+		padding-top: 100px;
 		min-height: 100vh;
 	}
 
 	.main-dark {
 		background-color: $bg-body--dark;
-		padding: 50px;
+		padding-top: 100px;
 		min-height: 100vh;
 	}
 
 	h1 {
 		font-weight: 300;
+		margin-bottom: 10px;
 	}
 
 	.results {
+		display: flex;
+		justify-content: center;
 		font-size: 12px;
-		margin: 12px 5px;
+		padding: 12px 5px;
 	}
 
 	.light {
@@ -196,7 +199,10 @@ body {
 
 	.more-button {
 		margin: auto;
-		margin-top: 20px;
+	}
+
+	.more-button-padding {
+		padding: 20px 0;
 	}
 
 	.dark_mood--button {
@@ -230,10 +236,6 @@ body {
 
 				&:hover {
 					box-shadow: 0 2px 6px 1px $primary-color--light;
-
-					.overlay {
-						display: block;
-					}
 				}
 
 				.title {
@@ -268,10 +270,6 @@ body {
 
 				&:hover {
 					box-shadow: 0 2px 6px 1px $primary-color--dark;
-
-					.overlay {
-						display: block;
-					}
 				}
 
 				.title {
@@ -319,11 +317,16 @@ body {
 			word-wrap: break-word;
 
 			> div {
-				margin-top: 15px;
+				margin-top: 10px;
+				min-height: 33px;
 			}
 
-			.overlay {
+			.overlay-button {
 				display: none;
+			}
+
+			&:hover .overlay-button {
+				display: block;
 			}
 
 			.title {

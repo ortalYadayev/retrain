@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 
 app.get(APIPath, (async (req, res) => {
   // @ts-ignore
-  const page: number = req.query.page || 1;
+  const page: number = req.query.page || 0;
   const data = await db.getTickets(page);
 
   res.json(data);

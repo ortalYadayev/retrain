@@ -8,7 +8,7 @@ import {stat} from "fs";
 export type AppState = {
 	tickets?: Ticket[],
 	search: string,
-	mood: string,
+	mood: string, // dark or light mood
 	openForm: boolean,
 	payload: Ticket,
 	errors: string,
@@ -39,9 +39,11 @@ export class App extends React.PureComponent<{}, AppState> {
 	searchDebounce: any = null;
 
 	async componentDidMount() {
+		const more = await api.getTickets(this.state.page);
+
 		this.setState({
-			tickets: await api.getTickets(this.state.page),
-			page: this.state.page + 1,
+			tickets: this.state.tickets ? this.state.tickets.concat(more) : more,
+			page: more.length === 20 ? this.state.page + 1 : -1,
 		});
 	}
 
@@ -72,7 +74,7 @@ export class App extends React.PureComponent<{}, AppState> {
 				<li key={ ticket.id } className='ticket'>
 					<div className='flex'>
 						<h5 className='title'>{ ticket.title }</h5>
-						<button onClick={ () => HandleClick(ticket) } className='hideTicket overlay'>
+						<button onClick={ () => HandleClick(ticket) } className='hideTicket overlay-button'>
 							{
 								!ticket.hide ? 'hide' : 'restore'
 							}
@@ -112,6 +114,10 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	newTicket = async () => {
+		if(this.state.openForm && !window.confirm('Are you sure?')) {
+			return;
+		}
+
 		this.setState({
 			openForm: !this.state.openForm,
 			errors: '',
@@ -206,7 +212,7 @@ export class App extends React.PureComponent<{}, AppState> {
 				<div className='form-card'>
 					<div className="row">
 						<label htmlFor="title">Title</label>
-						<input type="text" placeholder="title" onDragEnter={ this.handleSubmit } onChange={event => this.handleChange('title', event.target.value)} />
+						<input type="text" placeholder="title" onKeyPress={ this.handleSubmit } onChange={event => this.handleChange('title', event.target.value)} />
 					</div>
 
 					<div className="row-label">
@@ -248,19 +254,14 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	moreTickets = async () => {
-		const more = await api.getTickets(this.state.page);
-
-		this.setState({
-			tickets: this.state.tickets?.concat(more),
-			page: more.length === 20 ? this.state.page + 1 : -1,
-		});
+		await this.componentDidMount();
 	}
 
 	render() {	
 		const { tickets, mood, openForm, page } = this.state;
 
 		return (
-		<main data-testid="main" className={ mood === 'light' ? 'main-light' : 'main-dark' }>
+		<main data-testid="main" className={ 'main-' + mood }>
 			<div className={ mood }>
 				<button data-testid="dark-mood" onClick={ this.mood } className='dark_mood--button'>
 					{ mood === 'light' ? 'Dark' : 'Light'} Mood
@@ -273,7 +274,7 @@ export class App extends React.PureComponent<{}, AppState> {
 				</header>
 				{ tickets ?
 					<div className='flex'>
-						<div className='results'>Showing {tickets.length} results</div>
+						<div className='results'>Showing { tickets.length } results</div>
 						<button onClick={ this.newTicket } className='add-ticket'>
 							<PlusLg className='icon-button' />
 							{ openForm ? 'Cancel' : 'Add Ticket' }
@@ -294,11 +295,13 @@ export class App extends React.PureComponent<{}, AppState> {
 				}
 
 				{ page !== -1 ?
+					<div className="more-button-padding">
 						<button data-testid='more' onClick={ this.moreTickets } className='more-button'>
 							More Tickets
 						</button>
+					</div>
 						: <div data-testid='no-more' className='results'>
-							no more result
+							no more results
 						</div>
 				}
 			</div>

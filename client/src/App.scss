@@ -87,12 +87,12 @@ body {
 			background: $primary-color--light;
 		}
 
-		.dark_mood--button, .add-ticket,  {
+		.dark_mode--button, .add-ticket,  {
 			color: $color--light;
 			border: 2px solid $color--light;
 		}
 
-		.dark_mood--button:hover, .add-ticket:hover {
+		.dark_mode--button:hover, .add-ticket:hover {
 			background: $color--light;
 			color: $bg--light;
 		}
@@ -140,12 +140,12 @@ body {
 			background: $primary-color--dark;
 		}
 
-		.dark_mood--button, .add-ticket {
+		.dark_mode--button, .add-ticket {
 			color: $color--dark;
 			border: 2px solid $color--dark;
 		}
 
-		.dark_mood--button:hover, .add-ticket:hover {
+		.dark_mode--button:hover, .add-ticket:hover {
 			background: $color--dark;
 			color: $bg--dark;
 		}
@@ -205,7 +205,7 @@ body {
 		padding: 20px 0;
 	}
 
-	.dark_mood--button {
+	.dark_mode--button {
 		position: fixed;
 		z-index: 100;
 		background: $bg--light;
@@ -214,7 +214,7 @@ body {
 		margin: 20px;
 	}
 
-	.dark_mood--button, .add-ticket, .more-button {
+	.dark_mode--button, .add-ticket, .more-button {
 		display: flex;
 		align-items: center;
 		padding: 5px 20px;

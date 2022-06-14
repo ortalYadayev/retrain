@@ -8,7 +8,7 @@ import {stat} from "fs";
 export type AppState = {
 	tickets?: Ticket[],
 	search: string,
-	mood: string, // dark or light mood
+	mode: string, // dark or light mode
 	openForm: boolean,
 	payload: Ticket,
 	errors: string,
@@ -21,7 +21,7 @@ export class App extends React.PureComponent<{}, AppState> {
 
 	state: AppState = {
 		search: '',
-		mood: 'light',
+		mode: 'light',
 		openForm: false,
 		payload: {
 			id: '',
@@ -65,10 +65,10 @@ export class App extends React.PureComponent<{}, AppState> {
 			})
 		}
 
-		const { mood } = this.state;
+		const { mode } = this.state;
 
 		return (
-		<div className={ mood }>
+		<div className={ mode }>
 			<ul className='tickets'>
 				{ filteredTickets.map((ticket) => (
 				<li key={ ticket.id } className='ticket'>
@@ -107,9 +107,9 @@ export class App extends React.PureComponent<{}, AppState> {
 		}, 300);
 	}
 
-	mood = () => {
+	mode = () => {
 		this.setState({
-			mood: this.state.mood === 'light' ? 'dark' : 'light',
+			mode: this.state.mode === 'light' ? 'dark' : 'light',
 		})
 	}
 
@@ -205,10 +205,10 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	form = () => {
-		const { mood, errors } = this.state;
+		const { mode, errors } = this.state;
 
 		return (
-			<div className={ mood }>
+			<div className={ mode }>
 				<div className='form-card'>
 					<div className="row">
 						<label htmlFor="title">Title</label>
@@ -258,13 +258,13 @@ export class App extends React.PureComponent<{}, AppState> {
 	}
 
 	render() {	
-		const { tickets, mood, openForm, page } = this.state;
+		const { tickets, mode, openForm, page } = this.state;
 
 		return (
-		<main data-testid="main" className={ 'main-' + mood }>
-			<div className={ mood }>
-				<button data-testid="dark-mood" onClick={ this.mood } className='dark_mood--button'>
-					{ mood === 'light' ? 'Dark' : 'Light'} Mood
+		<main data-testid="main" className={ 'main-' + mode }>
+			<div className={ mode }>
+				<button data-testid="dark-mode" onClick={ this.mode } className='dark_mode--button'>
+					{ mode === 'light' ? 'Dark' : 'Light'} mode
 				</button>
 				<div>
 					<h1>Tickets List</h1>

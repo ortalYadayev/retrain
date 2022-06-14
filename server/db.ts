@@ -6,6 +6,8 @@ export interface DbClient {
   clone: (ticket: Ticket) => void;
 }
 
+const LIMIT = 20;
+
 export const dbClient = (opts: {filePath: string}): DbClient => {
   const knex = Knex({
     client: 'sqlite3',
@@ -13,8 +15,6 @@ export const dbClient = (opts: {filePath: string}): DbClient => {
       filename: opts.filePath,
     },
   });
-
-  const LIMIT = 20;
 
   knex.raw(`CREATE TABLE IF NOT EXISTS 'data' (
     id TEXT,

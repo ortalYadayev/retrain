@@ -13,7 +13,7 @@ export type Ticket = {
 
 export type ApiClient = {
     getTickets: (page: number) => Promise<Ticket[]>;
-    clone: (payload: Ticket) => Promise<Ticket>;
+    clone: (payload: Ticket) => void;
 }
 
 export const createApiClient = (): ApiClient => {
